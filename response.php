@@ -40,53 +40,52 @@ function parseText()
 	if($content == '0') {
 		$userObj->setUserMode(0);
 		responseText($GLOBALS['menuStr']);
-	} else {
-		switch($userMode) {
-			case 0:
-			//进入二级菜单
-			switch($content) {
-				case '1':
-				$contentStr = '请回复要查询的学号';
-				$userObj->setUserMode(1);
-				break;
-				case '9':
-				$xh = $userObj->getUserXH();
-				if (!empty($xh)) {
-					$userObj->setUserMode(0);
-					responseText('您已绑定学号:'.$xh);
-				} else {
-					$contentStr = '请回复你自己的学号';
-					$userObj->setUserMode(9);
-				}
-				break;
-				default:
-				$contentStr = '你输入了未知的指令，请回复数字指令';
-			}
-			responseText($contentStr, true);
+	}
+	switch($userMode) {
+		case 0:
+		//进入二级菜单
+		switch($content) {
+			case '1':
+			$contentStr = '请回复要查询的学号';
+			$userObj->setUserMode(1);
 			break;
-			case 1:
-			$profile = new ahutProfile();
-			if($profile->checkXH($content)) {
-				$info = $profile->getStudentInfo($content);
-				$contentStr = $info['xm'].' '.$info['xb'].' '.$info['xy'].' '.$info['zy'].' '.$info['bj'];
-			}else{
-				$contentStr = '请检查输入的学号是否有误';
-			}
-			responseText($contentStr, true);
-			break;
-			case 9:
-			$profile = new ahutProfile();
-			if($profile->checkXH($content)) {
-				$userObj->setUserXH($content);
+			case '9':
+			$xh = $userObj->getUserXH();
+			if (!empty($xh)) {
 				$userObj->setUserMode(0);
-				responseText('学号设置成功:'.$content);
-			}else{
-				responseText('学号设置失败，请检查输入是否有误', true);
+				responseText('您已绑定学号:'.$xh);
+			} else {
+				$contentStr = '请回复你自己的学号';
+				$userObj->setUserMode(9);
 			}
 			break;
 			default:
-			responseText($GLOBALS['menuStr']);
+			$contentStr = '你输入了未知的指令，请回复数字指令';
 		}
+		responseText($contentStr, true);
+		break;
+		case 1:
+		$profile = new ahutProfile();
+		if($profile->checkXH($content)) {
+			$info = $profile->getStudentInfo($content);
+			$contentStr = $info['xm'].' '.$info['xb'].' '.$info['xy'].' '.$info['zy'].' '.$info['bj'];
+		}else{
+			$contentStr = '请检查输入的学号是否有误';
+		}
+		responseText($contentStr, true);
+		break;
+		case 9:
+		$profile = new ahutProfile();
+		if($profile->checkXH($content)) {
+			$userObj->setUserXH($content);
+			$userObj->setUserMode(0);
+			responseText('学号设置成功:'.$content);
+		}else{
+			responseText('学号设置失败，请检查输入是否有误', true);
+		}
+		break;
+		default:
+		responseText($GLOBALS['menuStr']);
 	}
 }
 
