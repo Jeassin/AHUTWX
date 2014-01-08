@@ -2,12 +2,12 @@
 class ahutUser
 {
 	private $db;
-    private $key;
+	private $key;
 	
 	public function __construct($key)
 	{
 		$this->db = new ahutDB();
-        $this->key = $key;
+		$this->key = $key;
 	}
 	
 	//检查是否已有用户信息
@@ -46,7 +46,7 @@ class ahutUser
 		$sql = "UPDATE `wx_user` SET `xh` = '$xh' WHERE `key` LIKE '$this->key'";
 		$this->db->runSQL($sql);
 	}
-    
+	
 	//获取用户的学号
 	public function getUserXH($xh)
 	{
