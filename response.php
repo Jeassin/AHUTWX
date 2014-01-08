@@ -1,23 +1,23 @@
 <?php
-$GLOBALS['menuStr'] = '»¶Ó­¹Ø×¢°²¹¤´óĞÅÏ¢ÖúÊÖ£¬Çë»Ø¸´Êı×Ö½øÈëÏàÓ¦µÄÄ£Ê½£º
-1:ĞÅÏ¢²éÑ¯
-...
-9.¸öÈËÉèÖÃ
-0:·µ»ØÖ÷²Ëµ¥';
+if (empty($GLOBALS["HTTP_RAW_POST_DATA"])) exit;
+
+$GLOBALS['menuStr'] = 'æ¬¢è¿å…³æ³¨å®‰å·¥å¤§ä¿¡æ¯åŠ©æ‰‹ï¼Œè¯·å›å¤æ•°å­—è¿›å…¥ç›¸åº”çš„æ¨¡å¼ï¼š
+    1:ä¿¡æ¯æŸ¥è¯¢
+    ...
+    9.ä¸ªäººè®¾ç½®
+    0:è¿”å›ä¸»èœå•';
 
 $GLOBALS['postObj'] = simplexml_load_string($GLOBALS["HTTP_RAW_POST_DATA"], 'SimpleXMLElement', LIBXML_NOCDATA);
 $GLOBALS['toUserName'] = (string) trim($GLOBALS['postObj']->ToUserName);
 $GLOBALS['fromUserName'] = (string) trim($GLOBALS['postObj']->FromUserName);
 $GLOBALS['msgType'] = (string) trim($GLOBALS['postObj']->MsgType);
 
-if (empty($GLOBALS['fromUserName'])) die('½Ó¿Ú´íÎó');
-
 if ($GLOBALS['msgType'] == 'event') {
     parseEvent();
 } else if ($GLOBALS['msgType'] == 'text') {
     parseText();
 } else {
-    responseText('´íÎó£ºÎ´ÖªµÄÏûÏ¢ÀàĞÍ');
+    responseText('é”™è¯¯ï¼šæœªçŸ¥çš„æ¶ˆæ¯ç±»å‹');
 }
 
 function parseEvent()
@@ -26,7 +26,7 @@ function parseEvent()
     if ($event == 'subscribe') {
         responseText($GLOBALS['menuStr']);
     } else {
-        responseText('´íÎó£ºÎ´ÖªµÄÊÂ¼ş');
+        responseText('é”™è¯¯ï¼šæœªçŸ¥çš„äº‹ä»¶');
     }
 }
 
@@ -34,27 +34,33 @@ function parseText()
 {
     $content = (string) trim($GLOBALS['postObj']->Content);
     
-    $userObj = new ahutUser();
-    $userObj->addUser($GLOBALS['fromUserName']);
-    $userMode = $userObj->getUserMode($GLOBALS['fromUserName']);
+    $userObj = new ahutUser($GLOBALS['fromUserName']);
+    $userObj->addUser();
+    $userMode = $userObj->getUserMode();
     if($content == '0') {
-        $userObj->setUserMode($GLOBALS['fromUserName'], 0);
+        $userObj->setUserMode(0);
         responseText($GLOBALS['menuStr']);
     } else {
         switch($userMode) {
             case 0:
-            //½øÈë¶ş¼¶²Ëµ¥
+            //è¿›å…¥äºŒçº§èœå•
             switch($content) {
                 case '1':
-                $contentStr = 'Çë»Ø¸´Òª²éÑ¯µÄÑ§ºÅ';
-                $userObj->setUserMode($GLOBALS['fromUserName'], 1);
+                $contentStr = 'è¯·å›å¤è¦æŸ¥è¯¢çš„å­¦å·';
+                $userObj->setUserMode(1);
                 break;
                 case '9':
-                $contentStr = 'Çë»Ø¸´Äã×Ô¼ºµÄÑ§ºÅ';
-                $userObj->setUserMode($GLOBALS['fromUserName'], 9);
+                $xh = $userObj->getUserXH();
+                if (!empty($xh)) {
+                    $userObj->setUserMode(0);
+                    responseText('æ‚¨å·²ç»‘å®šå­¦å·:'.$xh);
+                } else {
+                    $contentStr = 'è¯·å›å¤ä½ è‡ªå·±çš„å­¦å·';
+                    $userObj->setUserMode(9);
+                }
                 break;
                 default:
-                $contentStr = 'ÄãÊäÈëÁËÎ´ÖªµÄÖ¸Áî£¬Çë»Ø¸´Êı×ÖÖ¸Áî';
+                $contentStr = 'ä½ è¾“å…¥äº†æœªçŸ¥çš„æŒ‡ä»¤ï¼Œè¯·å›å¤æ•°å­—æŒ‡ä»¤';
             }
             responseText($contentStr, true);
             break;
@@ -62,20 +68,20 @@ function parseText()
             $profile = new ahutProfile();
             if($profile->checkXH($content)) {
                 $info = $profile->getStudentInfo($content);
-                $contentStr = $info['xm'].' '.$info['xb'].' '.$info['xy'].' '.$info['bj'];
+                $contentStr = $info['xm'].' '.$info['xb'].' '.$info['xy'].' '.$info['zy'].' '.$info['bj'];
             }else{
-                $contentStr = 'Çë¼ì²éÊäÈëµÄÑ§ºÅÊÇ·ñÓĞÎó';
+                $contentStr = 'è¯·æ£€æŸ¥è¾“å…¥çš„å­¦å·æ˜¯å¦æœ‰è¯¯';
             }
             responseText($contentStr, true);
             break;
             case 9:
             $profile = new ahutProfile();
             if($profile->checkXH($content)) {
-                $userObj->setUserXH($GLOBALS['fromUserName'], $content);
-                $userObj->setUserMode($GLOBALS['fromUserName'], 0);
-                responseText('Ñ§ºÅÉèÖÃ³É¹¦:'.$content);
+                $userObj->setUserXH($content);
+                $userObj->setUserMode(0);
+                responseText('å­¦å·è®¾ç½®æˆåŠŸ:'.$content);
             }else{
-                responseText('Ñ§ºÅÉèÖÃÊ§°Ü£¬Çë¼ì²éÊäÈëÊÇ·ñÓĞÎó', true);
+                responseText('å­¦å·è®¾ç½®å¤±è´¥ï¼Œè¯·æ£€æŸ¥è¾“å…¥æ˜¯å¦æœ‰è¯¯', true);
             }
             break;
             default:
@@ -96,10 +102,12 @@ function responseText($msg, $tip = false)
 					<Content><![CDATA[%s]]></Content>
 					</xml>";
 	if ($tip == true) {
-		$msg .= '£¨»Ø¸´0·µ»ØÖ÷²Ëµ¥£©';
+		$msg .= ' 
+ï¼ˆå›å¤0è¿”å›ä¸»èœå•ï¼‰';
 	}
 	$resultStr = sprintf($textTpl, $GLOBALS['fromUserName'], $GLOBALS['toUserName'], $time, $msg);
 	echo $resultStr;
 	exit;
 }
-	
+
+?>
