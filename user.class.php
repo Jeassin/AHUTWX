@@ -26,6 +26,12 @@ class ahutUser
 		$this->db->runSQL($sql);
 	}
 	
+	//删除用户
+	public function deleteUser()
+	{
+		$sql = "DELETE FROM `wx_user` WHERE `key` LIKE '$this->key'";
+		$this->db->runSQL($sql);
+	}
 	//设置用户当前的状态（mode对应菜单中的数字）
 	public function setUserMode($mode)
 	{

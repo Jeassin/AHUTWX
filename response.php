@@ -8,9 +8,9 @@ $GLOBALS['menuStr'] = '欢迎关注安工大信息助手，请回复数字进入
     0:返回主菜单';
 
 $GLOBALS['postObj'] = simplexml_load_string($GLOBALS["HTTP_RAW_POST_DATA"], 'SimpleXMLElement', LIBXML_NOCDATA);
-$GLOBALS['toUserName'] = (string) trim($GLOBALS['postObj']->ToUserName);
-$GLOBALS['fromUserName'] = (string) trim($GLOBALS['postObj']->FromUserName);
-$GLOBALS['msgType'] = (string) trim($GLOBALS['postObj']->MsgType);
+$GLOBALS['toUserName'] = trim($GLOBALS['postObj']->ToUserName);
+$GLOBALS['fromUserName'] = trim($GLOBALS['postObj']->FromUserName);
+$GLOBALS['msgType'] = trim($GLOBALS['postObj']->MsgType);
 
 if ($GLOBALS['msgType'] == 'event') {
 	parseEvent();
@@ -22,9 +22,12 @@ if ($GLOBALS['msgType'] == 'event') {
 
 function parseEvent()
 {
-	$event = (string) trim($GLOBALS['postObj']->Event);
+	$event = trim($GLOBALS['postObj']->Event);
 	if ($event == 'subscribe') {
-		responseText($GLOBALS['menuStr']);
+		responseText($GLOBALS['menuStr']."\n".'欢迎关注我的新浪微博: 任震_renzhn');
+	} else if ($event == 'unsubscribe') {
+		$userObj = new ahutUser($GLOBALS['fromUserName']);
+		$userObj->deleteUser();
 	} else {
 		responseText('错误：未知的事件');
 	}
@@ -32,7 +35,7 @@ function parseEvent()
 
 function parseText()
 {
-	$content = (string) trim($GLOBALS['postObj']->Content);
+	$content = trim($GLOBALS['postObj']->Content);
 	
 	$userObj = new ahutUser($GLOBALS['fromUserName']);
 	$userObj->addUser();
@@ -46,7 +49,7 @@ function parseText()
 		//进入二级菜单
 		switch($content) {
 			case '1':
-			$contentStr = '请回复要查询的学号';
+			$contentStr = '请回复要查询的学号或姓名';
 			$userObj->setUserMode(1);
 			break;
 			case '9':
@@ -66,13 +69,7 @@ function parseText()
 		break;
 		case 1:
 		$profile = new ahutProfile();
-		if($profile->checkXH($content)) {
-			$info = $profile->getStudentInfo($content);
-			$contentStr = $info['xm'].' '.$info['xb'].' '.$info['xy'].' '.$info['zy'].' '.$info['bj'];
-		}else{
-			$contentStr = '请检查输入的学号是否有误';
-		}
-		responseText($contentStr, true);
+		responseText($profile->getStudentInfo($content), true);
 		break;
 		case 9:
 		$profile = new ahutProfile();
