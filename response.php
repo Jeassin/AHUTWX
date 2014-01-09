@@ -49,7 +49,7 @@ function parseText()
 		//进入二级菜单
 		switch($content) {
 			case '1':
-			$contentStr = '请回复要查询的学号或姓名';
+			$contentStr = '请回复要查询的学号或姓名或者拼音首字母'."\n".'末尾加“的课表”查询他/她的课表';
 			$userObj->setUserMode(1);
 			break;
 			case '9':
@@ -69,11 +69,10 @@ function parseText()
 		break;
 		case 1:
 		$profile = new ahutProfile();
-		responseText($profile->getStudentInfo($content), true);
+		responseText($profile->getInfo($content), true);
 		break;
 		case 9:
-		$profile = new ahutProfile();
-		if($profile->checkXH($content)) {
+		if(ahutProfile::checkXH($content)) {
 			$userObj->setUserXH($content);
 			$userObj->setUserMode(0);
 			responseText('学号设置成功:'.$content);
@@ -97,8 +96,7 @@ function responseText($msg, $tip = false)
 <Content><![CDATA[%s]]></Content>
 </xml>";
 	if ($tip == true) {
-		$msg .= ' 
-（回复0返回主菜单）';
+		$msg .= "\n".'（回复0返回主菜单）';
 	}
 	$resultStr = sprintf($textTpl, $GLOBALS['fromUserName'], $GLOBALS['toUserName'], $time, $msg);
 	echo $resultStr;

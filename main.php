@@ -1,4 +1,5 @@
 <?php
+include('common.php');
 include('db.class.php');
 include('profile.class.php');
 include('user.class.php');

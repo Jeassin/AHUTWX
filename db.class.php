@@ -9,7 +9,7 @@ class ahutDB
 		mysql_set_charset('utf8', $con); 
 		mysql_select_db(SAE_MYSQL_DB, $con);
 		if(!$con) {
-			die('Could not connect: ' . mysql_error());
+			throw new Exception('数据库无法连接' . mysql_error());
 		}
 	}
 	
