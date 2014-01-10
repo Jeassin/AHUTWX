@@ -1,20 +1,20 @@
 <?php
 @require('wechat.class.php');
 $options = array(
-	'token'=>'ahutapp', //ÌîÐ´ÄãÉè¶¨µÄkey
-	'appid'=>'gh_d6aefcbf9d45', //ÌîÐ´¸ß¼¶µ÷ÓÃ¹¦ÄÜµÄapp id
-	'appsecret'=>'', //ÌîÐ´¸ß¼¶µ÷ÓÃ¹¦ÄÜµÄÃÜÔ¿
+    'token' => 'ahutapp', //å¡«å†™ä½ è®¾å®šçš„key
+    'appid' => 'gh_d6aefcbf9d45', //å¡«å†™é«˜çº§è°ƒç”¨åŠŸèƒ½çš„app id
+    'appsecret' => '', //å¡«å†™é«˜çº§è°ƒç”¨åŠŸèƒ½çš„å¯†é’¥
 );
 $weObj = new Wechat($options);
 
-$newmenu =  array(
-	"button" => 
-		array(
-			array('type'=>'click','name'=>'×îÐÂÏûÏ¢','key'=>'MENU_KEY_NEWS'),
-			array('type'=>'view','name'=>'ÎÒÒªËÑË÷','url'=>'http://www.baidu.com'),   				
-		)
+$newmenu = array(
+    "button" =>
+    array(
+        array('type' => 'click', 'name' => 'æœ€æ–°æ¶ˆæ¯', 'key' => 'MENU_KEY_NEWS'),
+        array('type' => 'view', 'name' => 'æˆ‘è¦æœç´¢', 'url' => 'http://www.baidu.com'),
+    )
 );
 if ($weObj->createMenu($newmenu)) {
-	echo 'success';
+    echo 'success';
 }
 ?>
